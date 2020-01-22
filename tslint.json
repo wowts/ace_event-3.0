@@ -3,6 +3,9 @@
     "rules":{
         "no-empty":false,
         "interface-name": false,
-        "max-line-length": false
+        "max-line-length": false,
+        "variable-name": false,
+        "unified-signatures":false,
+        "curly":false
     }
 }

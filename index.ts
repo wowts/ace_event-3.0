@@ -1,5 +1,7 @@
+import { LuaObj } from "@wowts/lua";
 import { AceModule } from "@wowts/tsaddon";
 import { Constructor, Library } from "@wowts/tslib";
+import { CreateFrame, UIFrame } from "@wowts/wow-mock";
 
 export interface AceEvent {
     RegisterEvent(event: "PLAYER_ENTERING_WORLD", callback: (event: string) => void): void;
@@ -21,20 +23,35 @@ export type Callback = (...parameters: any[]) => void;
 const lib: Library<AceEvent> = {
     Embed<T extends Constructor<{}>>(Base: T): Constructor<AceEvent> & T {
         return class extends Base {
+            private _eventFrame: UIFrame;
+            private _event: LuaObj<Callback> = {};
+            constructor(...args: any[]) {
+                super(args);
+                this._eventFrame = CreateFrame("Frame");
+                this._eventFrame.SetScript("OnEvent", (frame: UIFrame, event: string, ...parameters: any[]) => {
+                    const callback = this._event[event];
+                    if (callback) {
+                        callback(event, ...parameters);
+                    }
+                });
+            }
             public RegisterEvent(event: "PLAYER_ENTERING_WORLD", callback: (event: string) => void): void;
             public RegisterEvent(event: "UNIT_AURA", callback: (event: string, unitId: string) => void): void;
             public RegisterEvent(event: string, callback: (event: string, ...parameters: any[]) => void): void;
             public RegisterEvent(event: string, callback: string): void;
             public RegisterEvent(event: string): void;
-            public RegisterEvent(event: string, callback?: Callback | string): void {}
+            public RegisterEvent(event: string, callback?: Callback | string): void {
+                this._eventFrame.RegisterEvent(event);
+                if (callback && typeof(callback) !== "string") this._event[event] = callback;
+            }
             public RegisterMessage(event: string, callback: (event: string, ...parameters: any[]) => void): void;
             public RegisterMessage(module: AceModule, event: string, callback: (event: string, ...parameters: any[]) => void): void;
             public RegisterMessage(event: string, callback: string): void;
             public RegisterMessage(event: string): void;
-            public RegisterMessage(eventOrModule: string | AceModule, eventOrCallback?: Callback | string, callback?: Callback): void {}
-            public UnregisterEvent(event: string): void{}
-            public UnregisterMessage(event: string): void{}
-            public SendMessage(event: string, ...parameters: any[]): void {}
+            public RegisterMessage(): void {}
+            public UnregisterEvent(): void{}
+            public UnregisterMessage(): void{}
+            public SendMessage(): void {}
         };
     },
 };
