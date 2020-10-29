@@ -17,7 +17,7 @@ const lib = {
             }
             RegisterEvent(event, callback) {
                 this._eventFrame.RegisterEvent(event);
-                if (callback && typeof (callback) !== "string")
+                if (callback && typeof callback !== "string")
                     this._event[event] = callback;
             }
             RegisterMessage() { }

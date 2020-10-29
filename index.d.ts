@@ -1,8 +1,7 @@
 import { AceModule } from "@wowts/tsaddon";
 import { Library } from "@wowts/tslib";
 export interface AceEvent {
-    RegisterEvent(event: "PLAYER_ENTERING_WORLD", callback: (event: string) => void): void;
-    RegisterEvent(event: "UNIT_AURA", callback: (event: string, unitId: string) => void): void;
+    RegisterEvent<T>(event: T, callback: (e: T, ...parameters: any[]) => void): void;
     RegisterEvent(event: string, callback: (event: string, ...parameters: any[]) => void): void;
     RegisterEvent(event: string, callback: string): void;
     RegisterEvent(event: string): void;

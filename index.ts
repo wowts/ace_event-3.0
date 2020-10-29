@@ -4,13 +4,25 @@ import { Constructor, Library } from "@wowts/tslib";
 import { CreateFrame, UIFrame } from "@wowts/wow-mock";
 
 export interface AceEvent {
-    RegisterEvent(event: "PLAYER_ENTERING_WORLD", callback: (event: string) => void): void;
-    RegisterEvent(event: "UNIT_AURA", callback: (event: string, unitId: string) => void): void;
-    RegisterEvent(event: string, callback: (event: string, ...parameters: any[]) => void): void;
+    RegisterEvent<T>(
+        event: T,
+        callback: (e: T, ...parameters: any[]) => void
+    ): void;
+    RegisterEvent(
+        event: string,
+        callback: (event: string, ...parameters: any[]) => void
+    ): void;
     RegisterEvent(event: string, callback: string): void;
     RegisterEvent(event: string): void;
-    RegisterMessage(event: string, callback: (event: string, ...parameters: any[]) => void): void;
-    RegisterMessage(module: AceModule, event: string, callback: (event: string, ...parameters: any[]) => void): void;
+    RegisterMessage(
+        event: string,
+        callback: (event: string, ...parameters: any[]) => void
+    ): void;
+    RegisterMessage(
+        module: AceModule,
+        event: string,
+        callback: (event: string, ...parameters: any[]) => void
+    ): void;
     RegisterMessage(event: string, callback: string): void;
     RegisterMessage(event: string): void;
     UnregisterEvent(event: string): void;
@@ -28,29 +40,48 @@ const lib: Library<AceEvent> = {
             constructor(...args: any[]) {
                 super(args);
                 this._eventFrame = CreateFrame("Frame");
-                this._eventFrame.SetScript("OnEvent", (frame: UIFrame, event: string, ...parameters: any[]) => {
-                    const callback = this._event[event];
-                    if (callback) {
-                        callback(event, ...parameters);
+                this._eventFrame.SetScript(
+                    "OnEvent",
+                    (frame: UIFrame, event: string, ...parameters: any[]) => {
+                        const callback = this._event[event];
+                        if (callback) {
+                            callback(event, ...parameters);
+                        }
                     }
-                });
+                );
             }
-            public RegisterEvent(event: "PLAYER_ENTERING_WORLD", callback: (event: string) => void): void;
-            public RegisterEvent(event: "UNIT_AURA", callback: (event: string, unitId: string) => void): void;
-            public RegisterEvent(event: string, callback: (event: string, ...parameters: any[]) => void): void;
+            public RegisterEvent<T>(
+                event: T,
+                callback: (e: T, ...parameters: any[]) => void
+            ): void;
+            public RegisterEvent(
+                event: string,
+                callback: (event: string, ...parameters: any[]) => void
+            ): void;
             public RegisterEvent(event: string, callback: string): void;
             public RegisterEvent(event: string): void;
-            public RegisterEvent(event: string, callback?: Callback | string): void {
+            public RegisterEvent(
+                event: string,
+                callback?: Callback | string
+            ): void {
                 this._eventFrame.RegisterEvent(event);
-                if (callback && typeof(callback) !== "string") this._event[event] = callback;
+                if (callback && typeof callback !== "string")
+                    this._event[event] = callback;
             }
-            public RegisterMessage(event: string, callback: (event: string, ...parameters: any[]) => void): void;
-            public RegisterMessage(module: AceModule, event: string, callback: (event: string, ...parameters: any[]) => void): void;
+            public RegisterMessage(
+                event: string,
+                callback: (event: string, ...parameters: any[]) => void
+            ): void;
+            public RegisterMessage(
+                module: AceModule,
+                event: string,
+                callback: (event: string, ...parameters: any[]) => void
+            ): void;
             public RegisterMessage(event: string, callback: string): void;
             public RegisterMessage(event: string): void;
             public RegisterMessage(): void {}
-            public UnregisterEvent(): void{}
-            public UnregisterMessage(): void{}
+            public UnregisterEvent(): void {}
+            public UnregisterMessage(): void {}
             public SendMessage(): void {}
         };
     },
