@@ -21,5 +21,10 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/wowts/ace_event-3.0.git"
+    },
+    "lua": {
+        "name": "AceEvent-3.0",
+        "svn": "https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0",
+        "entry": "AceEvent-3.0.xml"
     }
 }
